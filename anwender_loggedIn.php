@@ -8,7 +8,7 @@
     <?php
     session_start();
     if($_SESSION['U'] == 123321) {
-      echo "Wir sind in der anwender_loggedIn.php";
+      echo "<h1> Funktionsübersicht </h1>";
     ?>
     <br>
     <p>Register Student!</p>
