@@ -37,6 +37,7 @@
       echo "<a href='index.php'>Zur Anmeldung</a>";
     } else {
       echo "User ist da";
+      $_SESSION['Anwender'] = $username;
       $_SESSION['U'] = $UserAuthorized;
       header('Location: anwender_loggedIn.php');
     }

@@ -9,7 +9,7 @@
     include "functions.inc.php";
      ?>
      <h1>Geben Die Details zu Ihrem Fragebogen an</h1>
-     <form class="survey_details" action="survey_details.php" method="post">
+     <form class="survey_details" action="fill_survey.php" method="post">
        <label class="control-label" for="textinput">Questioncount: </label>
        <input type="text" name="count_questions" placeholder="How many questions?">
        <br>
