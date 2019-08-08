@@ -23,7 +23,7 @@
 
      $connectionString = mysqli_connect('localhost', 'root', '');
 
-     for ($i=1; $i<$questioncounter; $i++) {
+     for ($i=1; $i<=$questioncounter; $i++) {
 
        $c = $surveyname . $i;
        $question = $_POST[$c];
