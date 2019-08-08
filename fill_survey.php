@@ -37,13 +37,27 @@
       ?>
 
      <h1>Geben Sie Ihre Fragen ein</h1>
-     <form class="survey_details" action="fill_survey.php" method="post">
-       <label class="control-label" for="textinput">Fragen: </label>
+     <form class="survey_questions" action="save_questions.php" method="post">
 
+       <h2>Fragebogen: <?php echo "$survey_titel" ?></h2>
+
+        <?php
+            for ($i=1; $i <= $count_questions; $i++) {
+              $question_No = $survey_titel . $i;
+              echo "Fragenummer: $i";
+              echo '
+                <input type="text" name="'.$question_No.'" placeholder="Frage"> </br>
+              ';
+            }
+            echo "</br>";
+          ?>
+
+          <input type="hidden" name="questioncounter" value="<?php $count_questions ?>">
+          <input type="hidden" name="surveyname" value="<?php $survey_titel ?>">
        <!-- Button  -->
        <div>
          <div class="button">
-           <button id="button_create_survey" name="create_survey">Fragen speichern</button>
+           <button id="button_safe_questions" name="safe_questions">Fragen speichern</button>
          </div>
        </div>
 
