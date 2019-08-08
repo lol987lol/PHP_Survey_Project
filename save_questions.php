@@ -34,7 +34,7 @@
        //!!!!!!!!!!!!!!!!!!!
        // DATABASECONNECTION
        //!!!!!!!!!!!!!!!!!!!
-       echo $anfrageString;
+
        $connectionString = mysqli_connect('localhost', 'root', '');
        mysqli_select_db($connectionString, $dataBase);
        mysqli_query($connectionString, $anfrageString);
@@ -42,6 +42,9 @@
 
      mysqli_close($connectionString);
 
+     header('Location: create_survey.php');
+
       ?>
+
   </body>
 </html>

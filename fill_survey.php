@@ -52,8 +52,8 @@
             echo "</br>";
           ?>
 
-          <input type="hidden" name="questioncounter" value="<?php $count_questions ?>">
-          <input type="hidden" name="surveyname" value="<?php $survey_titel ?>">
+          <input type="hidden" name="questioncounter" value="<?php echo $count_questions; ?>">
+          <input type="hidden" name="surveyname" value="<?php echo $survey_titel; ?>">
        <!-- Button  -->
        <div>
          <div class="button">

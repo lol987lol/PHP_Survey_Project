@@ -24,6 +24,34 @@
          </div>
        </div>
 
+       <div class="Surveys">
+         <br><br>
+         <h3>Hier sehen Sie Ihren bisherigen Umfragen</h3>
+       </div>
+       <select class="DropdownSurvey" name="DropdownSUR">
+         <?php
+           //!!!!!!!!!
+           //VARIABLES
+           //!!!!!!!!!
+           $dataBase = 'webdb_kirchberg';
+           $anfrageString = "SELECT * FROM fragebogen";
+
+           //!!!!!!!!!!!!!!!!!!!
+           // DATABASECONNECTION
+           //!!!!!!!!!!!!!!!!!!!
+           $connectionString = mysqli_connect('localhost', 'root', '');
+           mysqli_select_db($connectionString, $dataBase);
+           $erg = mysqli_query ($connectionString, $anfrageString);
+
+           while ($table = mysqli_fetch_assoc($erg)) {
+             echo '
+               <option>'. $table['titel']. '</option>
+             ';
+           }
+             mysqli_close($connectionString);
+          ?>
+       </select>
+
      </form>
   </body>
 </html>
