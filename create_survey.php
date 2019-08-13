@@ -43,6 +43,10 @@
            mysqli_select_db($connectionString, $dataBase);
            $erg = mysqli_query ($connectionString, $anfrageString);
 
+           echo '
+             <option selected="selected">------</option>
+           ';
+
            while ($table = mysqli_fetch_assoc($erg)) {
              echo '
                <option>'. $table['titel']. '</option>
@@ -52,6 +56,54 @@
           ?>
        </select>
 
+       <button type="submit" formaction="/form/create_survey.php" name="create_table">Anzeigen</button>
+
+       <?php
+
+       $survey_choice = $_POST['DropdownSUR'];
+
+       echo "<br/>";
+       echo "<br/>";
+       echo "Inhalt der Tabelle:";echo $survey_choice;
+
+          if (isset($_POST['create_table'])) {
+            echo "<br/><br/>";
+          }
+
+          $anfrageStringSurvey = "SELECT fragenummer, frage
+                                  FROM fragen
+                                  WHERE fragebogentitel='$survey_choice'";
+
+          //!!!!!!!!!!!!!!!!!!!
+          // DATABASECONNECTION
+          //!!!!!!!!!!!!!!!!!!!
+          $connectionString = mysqli_connect('localhost', 'root', '');
+          mysqli_select_db($connectionString, $dataBase);
+          $ergSurvey = mysqli_query ($connectionString, $anfrageStringSurvey);
+
+          echo "<table id='Current_Survey' style='border: 1px solid black;'>";
+
+        ?>
+
+        <tr>
+          <th>Fragenummer</th>
+          <th>Frage</th>
+        </tr>
+
+          <?php
+          while ($table = mysqli_fetch_assoc($ergSurvey)) {
+          ?>
+              <tr>
+                <td><?php echo $table['fragenummer'] ?></td>
+                <td><?php echo $table['frage'] ?></td>
+              </tr>
+
+              <?php
+                  }
+
+                  echo "</table>";
+                    mysqli_close($connectionString);
+              ?>
      </form>
   </body>
 </html>
