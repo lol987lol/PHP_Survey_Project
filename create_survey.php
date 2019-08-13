@@ -66,10 +66,6 @@
        echo "<br/>";
        echo "Inhalt der Tabelle:";echo $survey_choice;
 
-          if (isset($_POST['create_table'])) {
-            echo "<br/><br/>";
-          }
-
           $anfrageStringSurvey = "SELECT fragenummer, frage
                                   FROM fragen
                                   WHERE fragebogentitel='$survey_choice'";
@@ -82,7 +78,6 @@
           $ergSurvey = mysqli_query ($connectionString, $anfrageStringSurvey);
 
           echo "<table id='Current_Survey' style='border: 1px solid black;'>";
-
         ?>
 
         <tr>

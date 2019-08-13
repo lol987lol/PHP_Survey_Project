@@ -6,7 +6,7 @@
   <!-- STUDENT -->
   <!-- !!!!!!!! -->
 <div>
-  <form class="student_registration" action="student_reg.php" method="post">
+  <form class="student_registration" action="student_loggingIn.php" method="post">
 
   <!-- Form Name -->
   <h1>Anmeldung Student</h1>
