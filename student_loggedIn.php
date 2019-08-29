@@ -10,6 +10,12 @@
       $student_name= $_SESSION['Student'];
       echo $student_name . ' ist eingeloggt.';
     ?>
+
+    <p>Answer Surveys</p>
+    <a href="answer_survey.php">
+      <img border="0" alt="Answer" src="Survey.png">
+    </a>
+
   </br>
   </body>
 </html>
