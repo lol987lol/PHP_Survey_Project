@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+   <head>
+      <title> Evaluate </title>
+   </head>
+   <body>
+	   <?php
+		  session_start(); 
+		  class FrageErgebnis
+			 {
+			 public $anzantworten;
+			 public $durchschnitt;
+			 public $minimum;
+			 public $maximum;
+			 public $stdabweichung;
+			 }
+	   
+		  class CAuswertung
+			 {
+			 private $fbtitel;
+			 private $kurs;
+			 private $ergebnisse;
+			 private $kommentare;
+			 
+			 // !!!!!!!!!!!!!!!!!!!!!!
+       // Protected Funktions
+       // !!!!!!!!!!!!!!!!!!!!!!
+			 
+			 protected function lade_kommentare ($c)
+			    {
+				$this->kommentare = array();
+				$sql = "select kommentar ".
+					   " from kommentar k, auswertbar aus, student s" .
+					   " where k.mnr = aus.mnr and s.mnr = k.mnr and " .
+					   " s.kurs = '" . $this->kurs . "' and " . 
+					   " k.fragebogentitel = aus.fragebogentitel and" . 
+					   " k.fragebogentitel = '" . $this->fbtitel . "' " ;
+				$r = mysqli_query ($c, $sql);
+				while ($row = mysqli_fetch_assoc($r))
+				   {
+				   $this->kommentare[] = $row["kommentar"]; 							   
+				   }
+				}
+			 
+			 protected function berechne_stdabw($c, $fragenummer, $durchschnitt, $anzantworten)
+				{
+				$sql = "select wert ".
+					   " from antwort a, auswertbar aus, student s" .
+					   " where a.mnr = aus.mnr and s.mnr = a.mnr and " .
+					   " s.kurs = '" . $this->kurs . "' and " . 
+					   " a.fragebogentitel = aus.fragebogentitel and" . 
+					   " a.fragebogentitel = '" . $this->fbtitel . "' and " .
+					   " fragenummer = " . $fragenummer;
+   				$r = mysqli_query ($c, $sql);
+				$varianz = 0;
+				while ($row = mysqli_fetch_assoc($r))
+				   {
+				   $abweichung = $row["wert"] -  $durchschnitt;
+				   $varianz += $abweichung * $abweichung;
+				   }
+				return sqrt($varianz / $anzantworten);
+				}
+
+		    protected function lade_punkteergebnisse ($c)
+			   {
+				$this->ergebnisse = array();
+				$sql = "select fragenummer, avg(wert) as avg, min(wert) as min, " .
+					   "       max(wert) as max, count(*) as anz ".
+					   " from antwort a, auswertbar aus, student s" .
+					   " where a.mnr = aus.mnr and s.mnr = a.mnr and " .
+					   " s.kurs = '" . $this->kurs . "' and " . 
+					   " a.fragebogentitel = aus.fragebogentitel and" . 
+					   " a.fragebogentitel = '" . $this->fbtitel . "' " .
+					   " group by fragenummer order by fragenummer";
+				$r = mysqli_query ($c, $sql);
+				while ($row = mysqli_fetch_assoc($r))
+				   {
+				   $frageerg = new FrageErgebnis;
+				   $frageerg->anzantworten = $row["anz"]; 			   
+				   $frageerg->durchschnitt = $row["avg"]; 			   
+				   $frageerg->minimum = $row["min"]; 			   
+				   $frageerg->maximum = $row["max"];
+				   $frageerg->stdabweichung = 
+						 $this->berechne_stdabw($c, $row["fragenummer"], 
+												$frageerg->durchschnitt, $frageerg->anzantworten);
+				   $this->ergebnisse[] = $frageerg; 							   
+				   }
+			   }
+				
+			 public function erg_fuer_frage ($fragenummer)
+			    {
+				return $this->ergebnisse[$fragenummer];
+				}
+			 
+			 public function kommentarzusammenfassung ()
+			    {
+				$kliste = "";
+				for ($i = 0; $i < sizeof ($this->kommentare); $i++)
+				   {
+				   $kliste .= "<p>" . $this->kommentare[$i] . "</p> <p> </p>";
+				   }
+				return $kliste;
+				}
+			 
+			 public function __construct ($sfbtitel, $skurs)
+				{
+				$this->fbtitel = $sfbtitel;
+				$this->kurs = $skurs;
+				$c = mysqli_connect("localhost", "root", "", "webdbkopplung");
+				$this->lade_punkteergebnisse($c);
+				$this->lade_kommentare($c);
+				}
+			 }
+	   ?>
+	   
+	   <h3> Ergebnisse des Fragebogens: 
+		  <?php echo $_SESSION["fbauswahl"] . 
+			  " des Anwenders " . $_SESSION["aname"] .
+			  " für den Kurs ". $_POST["kursauswahl"]; ?>
+	   </h3>
+	   
+	   <?php
+		 $tmp = explode('/', $_POST["kursauswahl"]);
+		 $erg = new CAuswertung ($_SESSION["fbauswahl"], $tmp[0]);
+	   ?>
+   
+      <table border="1">
+         <thead>
+            <tr> <th> Frage </th> <th> Durchschnitt </th> 
+			     <th> Minimum </th> <th> Maximum </th> <th> Standardabweichung </th>  </tr>
+         </thead>
+         <tbody>
+
+         <?php
+     		$c = mysqli_connect("localhost", "root", "", "webdbkopplung");
+            $r = mysqli_query ($c, "select fragenummer, frage from fragen ".
+                                   "where fragebogentitel = '" . 
+                                   $_SESSION["fbauswahl"] . "' order by fragenummer" );
+            while ($row = mysqli_fetch_assoc($r))
+               {
+               echo '<tr> <td> '. $row["fragenummer"] . '. ' . $row["frage"] . '</td>';
+			   $ferg = $erg->erg_fuer_frage($row["fragenummer"]-1);
+			   echo '<td>' . $ferg->durchschnitt . '</td>';
+			   echo '<td>' . $ferg->minimum . '</td>';
+			   echo '<td>' . $ferg->maximum . '</td>';
+			   echo '<td>' . $ferg->stdabweichung . '</td>';
+			   echo '</tr>';
+               }
+         ?>
+         
+         </tbody>
+      </table>
+      <h3> Abgegebene Kommentare </h3>
+	  <?php
+	     echo $erg->kommentarzusammenfassung();
+      ?>
+      <a href="anwenderaktionen.php"> Hier gehts zur Funktionsübersicht </a>
+
+   </body>
+</html>
