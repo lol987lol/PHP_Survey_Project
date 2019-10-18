@@ -21,8 +21,11 @@
     $connectionString = mysqli_connect('localhost', 'root', '');
     mysqli_select_db($connectionString, $dataBase);
 
-    $student_name = mysqli_fetch_assoc(mysqli_query($connectionString, $anfrageStringStudent))['Name'];
-    $UserCount = mysqli_fetch_assoc(mysqli_query($connectionString, $anfrageStringCheckUser))['anz'];
+    
+    $s1 = mysqli_query($connectionString, $anfrageStringStudent);
+    $u1 = mysqli_query($connectionString, $anfrageStringCheckUser);
+    $student_name = mysqli_fetch_assoc($s1)['Name'];
+    $UserCount = mysqli_fetch_assoc($u1)['anz'];
 
     if ($UserCount == 0) {
       echo "Student ist nicht da <br>";
